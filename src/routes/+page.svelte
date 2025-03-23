@@ -3,31 +3,35 @@
 </script>
 
 <ObjectView
-  vertices={[
-    { position: [-0.5, -0.5, -0.5], label: 'E' },
-    { position: [0.5, -0.5, -0.5], label: 'H' },
-    { position: [-0.5, 0.5, -0.5], label: 'A' },
-    { position: [0.5, 0.5, -0.5], label: 'D' },
-    { position: [-0.5, -0.5, 0.5], label: 'F' },
-    { position: [0.5, -0.5, 0.5], label: 'G' },
-    { position: [-0.5, 0.5, 0.5], label: 'B' },
-    { position: [0.5, 0.5, 0.5], label: 'C' }
-  ]}
-  lines={[
-    // 아랫면
-    { start: 0, end: 1 },
-    { start: 0, end: 2 },
-    { start: 1, end: 3 },
-    { start: 2, end: 3 },
-    // 윗면
-    { start: 4, end: 5 },
-    { start: 4, end: 6 },
-    { start: 5, end: 7 },
-    { start: 6, end: 7 },
-    // 옆 모서리
-    { start: 0, end: 4 },
-    { start: 1, end: 5 },
-    { start: 2, end: 6 },
-    { start: 3, end: 7 }
+  objects={[
+    {
+      vertices: [
+        { position: [-0.5, 0.5, -0.5], label: 'A' },
+        { position: [-0.5, 0.5, 0.5], label: 'B' },
+        { position: [0.5, 0.5, 0.5], label: 'C' },
+        { position: [0.5, 0.5, -0.5], label: 'D' },
+        { position: [-0.5, -0.5, -0.5], label: 'E' },
+        { position: [-0.5, -0.5, 0.5], label: 'F' },
+        { position: [0.5, -0.5, 0.5], label: 'G' },
+        { position: [0.5, -0.5, -0.5], label: 'H' }
+      ],
+      lines: [
+        // 아랫면
+        { start: 'A', end: 'B' },
+        { start: 'B', end: 'C' },
+        { start: 'C', end: 'D' },
+        { start: 'D', end: 'A' },
+        // 윗면
+        { start: 'E', end: 'F' },
+        { start: 'F', end: 'G' },
+        { start: 'G', end: 'H' },
+        { start: 'H', end: 'E' },
+        // 옆 모서리
+        { start: 'A', end: 'E' },
+        { start: 'B', end: 'F' },
+        { start: 'C', end: 'G' },
+        { start: 'D', end: 'H' }
+      ]
+    }
   ]}
 />

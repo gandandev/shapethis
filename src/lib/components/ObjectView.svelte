@@ -4,26 +4,29 @@
   import { LineBasicMaterial, BufferGeometry, Float32BufferAttribute } from 'three'
   import { Text } from '@threlte/extras'
 
-  let {
-    vertices,
-    lines
-  }: {
+  type Object = {
     vertices: { position: [number, number, number]; label: string }[]
-    lines: { start: number; end: number }[]
-  } = $props()
+    lines: { start: string; end: string }[]
+  }
+
+  let { objects }: { objects: Object[] } = $props()
 
   const createLineGeometry = () => {
     const geometry = new BufferGeometry()
     const positions: number[] = []
 
-    lines.forEach((line) => {
-      const startVertex = vertices[line.start]
-      const endVertex = vertices[line.end]
+    objects.forEach((object) => {
+      object.lines.forEach((line) => {
+        const vertexMap = Object.fromEntries(object.vertices.map((v, i) => [v.label, v]))
 
-      if (startVertex && endVertex) {
-        positions.push(...startVertex.position)
-        positions.push(...endVertex.position)
-      }
+        const startVertex = vertexMap[line.start]
+        const endVertex = vertexMap[line.end]
+
+        if (startVertex && endVertex) {
+          positions.push(...startVertex.position)
+          positions.push(...endVertex.position)
+        }
+      })
     })
 
     geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))
@@ -47,22 +50,24 @@
 
     <T.LineSegments geometry={lineGeometry} material={lineMaterial} />
 
-    {#each vertices as vertex}
-      <T.Group position={vertex.position}>
-        <Billboard>
-          <Text
-            position={[0, 0, 0]}
-            text={vertex.label}
-            color="#000000"
-            fontSize={0.2}
-            font="https://cdn.jsdelivr.net/npm/mathjax-full@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff"
-            anchorX="center"
-            anchorY="middle"
-            depthWrite={false}
-            renderOrder={1000}
-          />
-        </Billboard>
-      </T.Group>
+    {#each objects as object}
+      {#each object.vertices as vertex}
+        <T.Group position={vertex.position}>
+          <Billboard>
+            <Text
+              position={[0, 0, 0]}
+              text={vertex.label}
+              color="#000000"
+              fontSize={0.2}
+              font="https://cdn.jsdelivr.net/npm/mathjax-full@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff"
+              anchorX="center"
+              anchorY="middle"
+              depthWrite={false}
+              renderOrder={1000}
+            />
+          </Billboard>
+        </T.Group>
+      {/each}
     {/each}
   </Canvas>
 </div>
