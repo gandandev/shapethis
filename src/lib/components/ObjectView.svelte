@@ -36,8 +36,13 @@
 
 <div class="h-screen w-full">
   <Canvas>
-    <T.PerspectiveCamera position={[3, 3, 3]} fov={75} makeDefault>
-      <OrbitControls enableZoom={true} enableDamping={true} target={[0, 0, 0]} />
+    <T.PerspectiveCamera position={[0, 2, 3]} fov={75} makeDefault>
+      <OrbitControls
+        enableZoom={true}
+        enableDamping={true}
+        dampingFactor={0.25}
+        target={[0, 0, 0]}
+      />
     </T.PerspectiveCamera>
 
     <T.LineSegments geometry={lineGeometry} material={lineMaterial} />
