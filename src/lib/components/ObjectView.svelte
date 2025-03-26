@@ -6,11 +6,29 @@
 
   type Object = {
     position?: [number, number, number]
-    vertices: { position: [number, number, number]; label: string }[]
+    vertices: {
+      position: [number, number, number]
+      label: string
+      show?: boolean
+    }[]
     lines: { start: string; end: string }[]
+    options?: {
+      showVertices?: boolean
+    }
+  }
+
+  const DEFAULT_OPTIONS = {
+    showVertices: true
   }
 
   let { objects }: { objects: Object[] } = $props()
+
+  $effect(() => {
+    objects = objects.map((obj) => ({
+      ...obj,
+      options: { ...DEFAULT_OPTIONS, ...obj.options }
+    }))
+  })
 
   const createLineGeometry = () => {
     const geometry = new BufferGeometry()
@@ -45,6 +63,14 @@
 
   const lineMaterial = new LineBasicMaterial({ color: 0x000000 })
   const lineGeometry = createLineGeometry()
+
+  const shouldShowVertex = (
+    vertex: Object['vertices'][number],
+    objectOptions: Object['options']
+  ) =>
+    vertex.show !== undefined
+      ? vertex.show
+      : (objectOptions?.showVertices ?? DEFAULT_OPTIONS.showVertices)
 </script>
 
 <div class="h-screen w-full">
@@ -62,27 +88,29 @@
 
     {#each objects as object}
       {#each object.vertices as vertex}
-        <T.Group
-          position={[
-            vertex.position[0] + (object.position?.[0] || 0),
-            vertex.position[1] + (object.position?.[1] || 0),
-            vertex.position[2] + (object.position?.[2] || 0)
-          ]}
-        >
-          <Billboard>
-            <Text
-              position={[0, 0, 0]}
-              text={vertex.label}
-              color="#000000"
-              fontSize={0.2}
-              font="https://cdn.jsdelivr.net/npm/mathjax-full@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff"
-              anchorX="center"
-              anchorY="middle"
-              depthWrite={false}
-              renderOrder={1000}
-            />
-          </Billboard>
-        </T.Group>
+        {#if shouldShowVertex(vertex, object.options)}
+          <T.Group
+            position={[
+              vertex.position[0] + (object.position?.[0] || 0),
+              vertex.position[1] + (object.position?.[1] || 0),
+              vertex.position[2] + (object.position?.[2] || 0)
+            ]}
+          >
+            <Billboard>
+              <Text
+                position={[0, 0, 0]}
+                text={vertex.label}
+                color="#000000"
+                fontSize={0.2}
+                font="https://cdn.jsdelivr.net/npm/mathjax-full@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff"
+                anchorX="center"
+                anchorY="middle"
+                depthWrite={false}
+                renderOrder={1000}
+              />
+            </Billboard>
+          </T.Group>
+        {/if}
       {/each}
     {/each}
   </Canvas>

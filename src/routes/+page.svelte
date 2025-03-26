@@ -7,7 +7,7 @@
     {
       position: [0, 0, 0],
       vertices: [
-        { position: [-0.5, 0.5, -0.5], label: 'A' },
+        { position: [-0.5, 0.5, -0.5], label: 'A', show: false },
         { position: [-0.5, 0.5, 0.5], label: 'B' },
         { position: [0.5, 0.5, 0.5], label: 'C' },
         { position: [0.5, 0.5, -0.5], label: 'D' },
@@ -62,7 +62,10 @@
         { start: 'J', end: 'N' },
         { start: 'K', end: 'O' },
         { start: 'L', end: 'P' }
-      ]
+      ],
+      options: {
+        showVertices: false
+      }
     }
   ]}
 />
