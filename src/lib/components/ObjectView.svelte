@@ -5,6 +5,7 @@
   import { Text } from '@threlte/extras'
 
   type Object = {
+    position?: [number, number, number]
     vertices: { position: [number, number, number]; label: string }[]
     lines: { start: string; end: string }[]
   }
@@ -16,6 +17,7 @@
     const positions: number[] = []
 
     objects.forEach((object) => {
+      const objPosition = object.position || [0, 0, 0]
       object.lines.forEach((line) => {
         const vertexMap = Object.fromEntries(object.vertices.map((v, i) => [v.label, v]))
 
@@ -23,8 +25,16 @@
         const endVertex = vertexMap[line.end]
 
         if (startVertex && endVertex) {
-          positions.push(...startVertex.position)
-          positions.push(...endVertex.position)
+          positions.push(
+            startVertex.position[0] + objPosition[0],
+            startVertex.position[1] + objPosition[1],
+            startVertex.position[2] + objPosition[2]
+          )
+          positions.push(
+            endVertex.position[0] + objPosition[0],
+            endVertex.position[1] + objPosition[1],
+            endVertex.position[2] + objPosition[2]
+          )
         }
       })
     })
@@ -52,7 +62,13 @@
 
     {#each objects as object}
       {#each object.vertices as vertex}
-        <T.Group position={vertex.position}>
+        <T.Group
+          position={[
+            vertex.position[0] + (object.position?.[0] || 0),
+            vertex.position[1] + (object.position?.[1] || 0),
+            vertex.position[2] + (object.position?.[2] || 0)
+          ]}
+        >
           <Billboard>
             <Text
               position={[0, 0, 0]}
