@@ -139,6 +139,7 @@
 
     <T.AmbientLight intensity={1} />
     <T.DirectionalLight position={[0, 5, 0]} intensity={1} />
+    <T.DirectionalLight position={[0, -5, 0]} intensity={1} />
 
     <T.LineSegments geometry={lineGeometry} material={lineMaterial} />
 
