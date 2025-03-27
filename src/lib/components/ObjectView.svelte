@@ -5,7 +5,7 @@
     LineBasicMaterial,
     BufferGeometry,
     Float32BufferAttribute,
-    MeshBasicMaterial,
+    MeshStandardMaterial,
     DoubleSide
   } from 'three'
   import { Text } from '@threlte/extras'
@@ -137,6 +137,9 @@
       />
     </T.PerspectiveCamera>
 
+    <T.AmbientLight intensity={1} />
+    <T.DirectionalLight position={[0, 5, 0]} intensity={1} />
+
     <T.LineSegments geometry={lineGeometry} material={lineMaterial} />
 
     {#each objects as object}
@@ -145,12 +148,13 @@
         {#if faceGeometry}
           <T.Mesh
             geometry={faceGeometry}
-            material={new MeshBasicMaterial({
+            material={new MeshStandardMaterial({
               color: object.options?.color || DEFAULT_OPTIONS.color,
               transparent: true,
-              opacity: 0.2,
+              opacity: 0.6,
               depthWrite: false,
-              side: DoubleSide
+              side: DoubleSide,
+              envMapIntensity: 1
             })}
             renderOrder={1}
           />
