@@ -134,6 +134,7 @@
         enableDamping={true}
         dampingFactor={0.25}
         target={[0, 0, 0]}
+        maxDistance={10}
       />
     </T.PerspectiveCamera>
 
