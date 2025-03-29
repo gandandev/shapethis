@@ -1,13 +1,7 @@
 <script lang="ts">
   import { Canvas, T } from '@threlte/core'
   import { OrbitControls, Billboard } from '@threlte/extras'
-  import {
-    LineBasicMaterial,
-    BufferGeometry,
-    Float32BufferAttribute,
-    MeshStandardMaterial,
-    DoubleSide
-  } from 'three'
+  import { LineBasicMaterial, MeshStandardMaterial, DoubleSide } from 'three'
   import { Text } from '@threlte/extras'
   import {
     getAdjustedVertexPosition,
@@ -58,7 +52,7 @@
 
     <T.LineSegments geometry={createLineGeometry(objects)} material={lineMaterial} />
 
-    {#each objects as object}
+    {#each objects as object, i (i)}
       {#if object.options?.mode === 'solid' && object.faces && object.faces.length > 0}
         {@const faceGeometry = createFaceGeometry(object)}
         {#if faceGeometry}
@@ -77,7 +71,7 @@
         {/if}
       {/if}
 
-      {#each object.vertices as vertex}
+      {#each object.vertices as vertex, j (`${i}-${j}-${vertex.label}`)}
         {#if shouldShowVertex(vertex, object.options, DEFAULT_OPTIONS)}
           {@const center = calculateCenter(object.vertices)}
           {@const adjustedPosition = getAdjustedVertexPosition(
