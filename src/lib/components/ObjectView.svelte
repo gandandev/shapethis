@@ -41,12 +41,43 @@
     }))
   })
 
+  const getAdjustedVertexPosition = (
+    vertex: [number, number, number],
+    center: [number, number, number],
+    objPosition: [number, number, number]
+  ) => {
+    return [
+      vertex[0] - center[0] + objPosition[0],
+      vertex[1] - center[1] + objPosition[1],
+      vertex[2] - center[2] + objPosition[2]
+    ] as [number, number, number]
+  }
+
+  const calculateCenter = (
+    vertices: { position: [number, number, number] }[]
+  ): [number, number, number] => {
+    if (vertices.length === 0) return [0, 0, 0]
+
+    const sum = vertices.reduce(
+      (acc, vertex) => [
+        acc[0] + vertex.position[0],
+        acc[1] + vertex.position[1],
+        acc[2] + vertex.position[2]
+      ],
+      [0, 0, 0]
+    )
+
+    return [sum[0] / vertices.length, sum[1] / vertices.length, sum[2] / vertices.length]
+  }
+
   const createLineGeometry = () => {
     const geometry = new BufferGeometry()
     const positions: number[] = []
 
     objects.forEach((object) => {
       const objPosition = object.position || [0, 0, 0]
+      const center = calculateCenter(object.vertices)
+
       object.lines.forEach((line) => {
         const vertexMap = Object.fromEntries(object.vertices.map((v, i) => [v.label, v]))
 
@@ -54,16 +85,11 @@
         const endVertex = vertexMap[line.end]
 
         if (startVertex && endVertex) {
-          positions.push(
-            startVertex.position[0] + objPosition[0],
-            startVertex.position[1] + objPosition[1],
-            startVertex.position[2] + objPosition[2]
-          )
-          positions.push(
-            endVertex.position[0] + objPosition[0],
-            endVertex.position[1] + objPosition[1],
-            endVertex.position[2] + objPosition[2]
-          )
+          const adjustedStart = getAdjustedVertexPosition(startVertex.position, center, objPosition)
+          const adjustedEnd = getAdjustedVertexPosition(endVertex.position, center, objPosition)
+
+          positions.push(adjustedStart[0], adjustedStart[1], adjustedStart[2])
+          positions.push(adjustedEnd[0], adjustedEnd[1], adjustedEnd[2])
         }
       })
     })
@@ -80,16 +106,13 @@
     const indices: number[] = []
 
     const objPosition = object.position || [0, 0, 0]
+    const center = calculateCenter(object.vertices)
     const vertexMap = Object.fromEntries(object.vertices.map((v) => [v.label, v]))
 
     const uniqueVertices = new Map()
     object.vertices.forEach((vertex, index) => {
-      const position = vertex.position
-      positions.push(
-        position[0] + objPosition[0],
-        position[1] + objPosition[1],
-        position[2] + objPosition[2]
-      )
+      const adjustedPosition = getAdjustedVertexPosition(vertex.position, center, objPosition)
+      positions.push(adjustedPosition[0], adjustedPosition[1], adjustedPosition[2])
       uniqueVertices.set(vertex.label, index)
     })
 
@@ -165,13 +188,13 @@
 
       {#each object.vertices as vertex}
         {#if shouldShowVertex(vertex, object.options)}
-          <T.Group
-            position={[
-              vertex.position[0] + (object.position?.[0] || 0),
-              vertex.position[1] + (object.position?.[1] || 0),
-              vertex.position[2] + (object.position?.[2] || 0)
-            ]}
-          >
+          {@const center = calculateCenter(object.vertices)}
+          {@const adjustedPosition = getAdjustedVertexPosition(
+            vertex.position,
+            center,
+            object.position || [0, 0, 0]
+          )}
+          <T.Group position={[adjustedPosition[0], adjustedPosition[1], adjustedPosition[2]]}>
             <Billboard>
               <Text
                 position={[0, 0, 0]}

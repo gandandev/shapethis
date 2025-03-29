@@ -7,14 +7,14 @@
     {
       position: [0, 0, 0],
       vertices: [
-        { position: [-0.5, 0.5, -0.5], label: 'A' },
-        { position: [-0.5, 0.5, 0.5], label: 'B' },
-        { position: [0.5, 0.5, 0.5], label: 'C' },
-        { position: [0.5, 0.5, -0.5], label: 'D' },
-        { position: [-0.5, -0.5, -0.5], label: 'E' },
-        { position: [-0.5, -0.5, 0.5], label: 'F' },
-        { position: [0.5, -0.5, 0.5], label: 'G' },
-        { position: [0.5, -0.5, -0.5], label: 'H' }
+        { position: [0, 1, 0], label: 'A' },
+        { position: [0, 1, 1], label: 'B' },
+        { position: [1, 1, 1], label: 'C' },
+        { position: [1, 1, 0], label: 'D' },
+        { position: [0, 0, 0], label: 'E' },
+        { position: [0, 0, 1], label: 'F' },
+        { position: [1, 0, 1], label: 'G' },
+        { position: [1, 0, 0], label: 'H' }
       ],
       lines: [
         // 아랫면
@@ -49,14 +49,14 @@
     {
       position: [2, 0, 0],
       vertices: [
-        { position: [-0.5, 0.5, -0.5], label: 'A' },
-        { position: [-0.5, 0.5, 0.5], label: 'B' },
-        { position: [0.5, 0.5, 0.5], label: 'C' },
-        { position: [0.5, 0.5, -0.5], label: 'D' },
-        { position: [-0.5, -0.5, -0.5], label: 'E' },
-        { position: [-0.5, -0.5, 0.5], label: 'F' },
-        { position: [0.5, -0.5, 0.5], label: 'G' },
-        { position: [0.5, -0.5, -0.5], label: 'H' }
+        { position: [0, 1, 0], label: 'A' },
+        { position: [0, 1, 1], label: 'B' },
+        { position: [1, 1, 1], label: 'C' },
+        { position: [1, 1, 0], label: 'D' },
+        { position: [0, 0, 0], label: 'E' },
+        { position: [0, 0, 1], label: 'F' },
+        { position: [1, 0, 1], label: 'G' },
+        { position: [1, 0, 0], label: 'H' }
       ],
       lines: [
         // 아랫면
