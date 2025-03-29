@@ -17,7 +17,7 @@
       label: string
       show?: boolean
     }[]
-    lines: { start: string; end: string }[]
+    lines?: { start: string; end: string }[]
     faces?: { vertices: string[] }[]
     options?: {
       showVertices?: boolean
@@ -35,6 +35,8 @@
   let { objects }: { objects: Object[] } = $props()
 
   $effect(() => {
+    if (!objects) objects = []
+
     objects = objects.map((obj) => ({
       ...obj,
       options: { ...DEFAULT_OPTIONS, ...obj.options }
@@ -56,7 +58,7 @@
   const calculateCenter = (
     vertices: { position: [number, number, number] }[]
   ): [number, number, number] => {
-    if (vertices.length === 0) return [0, 0, 0]
+    if (!vertices?.length) return [0, 0, 0]
 
     const sum = vertices.reduce(
       (acc, vertex) => [
@@ -70,36 +72,87 @@
     return [sum[0] / vertices.length, sum[1] / vertices.length, sum[2] / vertices.length]
   }
 
-  const createLineGeometry = () => {
+  const extractEdgesFromFace = (faceVertices: string[]): [string, string][] => {
+    if (!faceVertices?.length) return []
+
+    const edges: [string, string][] = []
+    for (let i = 0; i < faceVertices.length; i++) {
+      const start = faceVertices[i]
+      const end = faceVertices[(i + 1) % faceVertices.length]
+
+      const edge: [string, string] = start < end ? [start, end] : [end, start]
+      edges.push(edge)
+    }
+    return edges
+  }
+
+  const getUniqueEdges = (object: Object): { start: string; end: string }[] => {
+    if (!object?.faces?.length) return object?.lines || []
+
+    const edgeSet = new Set<string>()
+    const result: { start: string; end: string }[] = []
+
+    for (const face of object.faces) {
+      const edges = extractEdgesFromFace(face.vertices)
+
+      for (const [start, end] of edges) {
+        const edgeKey = `${start}-${end}`
+        if (!edgeSet.has(edgeKey)) {
+          edgeSet.add(edgeKey)
+          result.push({ start, end })
+        }
+      }
+    }
+
+    if (object.lines?.length) {
+      for (const line of object.lines) {
+        const [start, end] = line.start < line.end ? [line.start, line.end] : [line.end, line.start]
+
+        const edgeKey = `${start}-${end}`
+        if (!edgeSet.has(edgeKey)) {
+          edgeSet.add(edgeKey)
+          result.push({ start, end })
+        }
+      }
+    }
+
+    return result
+  }
+
+  const createLineGeometry = (objects: Object[]): BufferGeometry => {
     const geometry = new BufferGeometry()
+    if (!objects?.length) return geometry
+
     const positions: number[] = []
 
-    objects.forEach((object) => {
+    for (const object of objects) {
+      if (!object?.vertices?.length) continue
+
       const objPosition = object.position || [0, 0, 0]
       const center = calculateCenter(object.vertices)
+      const vertexMap = new Map(object.vertices.map((v) => [v.label, v]))
 
-      object.lines.forEach((line) => {
-        const vertexMap = Object.fromEntries(object.vertices.map((v, i) => [v.label, v]))
+      const edges = getUniqueEdges(object)
 
-        const startVertex = vertexMap[line.start]
-        const endVertex = vertexMap[line.end]
+      for (const { start, end } of edges) {
+        const startVertex = vertexMap.get(start)
+        const endVertex = vertexMap.get(end)
 
         if (startVertex && endVertex) {
           const adjustedStart = getAdjustedVertexPosition(startVertex.position, center, objPosition)
           const adjustedEnd = getAdjustedVertexPosition(endVertex.position, center, objPosition)
 
-          positions.push(adjustedStart[0], adjustedStart[1], adjustedStart[2])
-          positions.push(adjustedEnd[0], adjustedEnd[1], adjustedEnd[2])
+          positions.push(...adjustedStart, ...adjustedEnd)
         }
-      })
-    })
+      }
+    }
 
     geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))
     return geometry
   }
 
-  const createFaceGeometry = (object: Object) => {
-    if (!object.faces || object.faces.length === 0) return null
+  const createFaceGeometry = (object: Object): BufferGeometry | null => {
+    if (!object?.faces?.length || !object?.vertices?.length) return null
 
     const geometry = new BufferGeometry()
     const positions: number[] = []
@@ -107,28 +160,28 @@
 
     const objPosition = object.position || [0, 0, 0]
     const center = calculateCenter(object.vertices)
-    const vertexMap = Object.fromEntries(object.vertices.map((v) => [v.label, v]))
 
-    const uniqueVertices = new Map()
+    const vertexIndices = new Map()
+
     object.vertices.forEach((vertex, index) => {
       const adjustedPosition = getAdjustedVertexPosition(vertex.position, center, objPosition)
-      positions.push(adjustedPosition[0], adjustedPosition[1], adjustedPosition[2])
-      uniqueVertices.set(vertex.label, index)
+      positions.push(...adjustedPosition)
+      vertexIndices.set(vertex.label, index)
     })
 
-    object.faces.forEach((face) => {
-      if (face.vertices.length >= 3) {
-        for (let i = 1; i < face.vertices.length - 1; i++) {
-          const v0 = uniqueVertices.get(face.vertices[0])
-          const v1 = uniqueVertices.get(face.vertices[i])
-          const v2 = uniqueVertices.get(face.vertices[i + 1])
+    for (const face of object.faces) {
+      if (!face.vertices?.length || face.vertices.length < 3) continue
 
-          if (v0 !== undefined && v1 !== undefined && v2 !== undefined) {
-            indices.push(v0, v1, v2)
-          }
+      for (let i = 1; i < face.vertices.length - 1; i++) {
+        const v0 = vertexIndices.get(face.vertices[0])
+        const v1 = vertexIndices.get(face.vertices[i])
+        const v2 = vertexIndices.get(face.vertices[i + 1])
+
+        if (v0 !== undefined && v1 !== undefined && v2 !== undefined) {
+          indices.push(v0, v1, v2)
         }
       }
-    })
+    }
 
     geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))
     geometry.setIndex(indices)
@@ -137,9 +190,6 @@
     return geometry
   }
 
-  const lineMaterial = new LineBasicMaterial({ color: 0x000000 })
-  const lineGeometry = createLineGeometry()
-
   const shouldShowVertex = (
     vertex: Object['vertices'][number],
     objectOptions: Object['options']
@@ -147,6 +197,8 @@
     vertex.show !== undefined
       ? vertex.show
       : (objectOptions?.showVertices ?? DEFAULT_OPTIONS.showVertices)
+
+  const lineMaterial = new LineBasicMaterial({ color: 0x000000 })
 </script>
 
 <div class="h-screen w-full">
@@ -165,7 +217,7 @@
     <T.DirectionalLight position={[0, 5, 0]} intensity={1} />
     <T.DirectionalLight position={[0, -5, 0]} intensity={1} />
 
-    <T.LineSegments geometry={lineGeometry} material={lineMaterial} />
+    <T.LineSegments geometry={createLineGeometry(objects)} material={lineMaterial} />
 
     {#each objects as object}
       {#if object.options?.mode === 'solid' && object.faces && object.faces.length > 0}

@@ -16,23 +16,6 @@
         { position: [1, 0, 1], label: 'G' },
         { position: [1, 0, 0], label: 'H' }
       ],
-      lines: [
-        // 아랫면
-        { start: 'A', end: 'B' },
-        { start: 'B', end: 'C' },
-        { start: 'C', end: 'D' },
-        { start: 'D', end: 'A' },
-        // 윗면
-        { start: 'E', end: 'F' },
-        { start: 'F', end: 'G' },
-        { start: 'G', end: 'H' },
-        { start: 'H', end: 'E' },
-        // 옆 모서리
-        { start: 'A', end: 'E' },
-        { start: 'B', end: 'F' },
-        { start: 'C', end: 'G' },
-        { start: 'D', end: 'H' }
-      ],
       faces: [
         { vertices: ['A', 'B', 'C', 'D'] }, // 윗면
         { vertices: ['E', 'F', 'G', 'H'] }, // 아랫면
@@ -57,23 +40,6 @@
         { position: [0, 0, 1], label: 'F' },
         { position: [1, 0, 1], label: 'G' },
         { position: [1, 0, 0], label: 'H' }
-      ],
-      lines: [
-        // 아랫면
-        { start: 'A', end: 'B' },
-        { start: 'B', end: 'C' },
-        { start: 'C', end: 'D' },
-        { start: 'D', end: 'A' },
-        // 윗면
-        { start: 'E', end: 'F' },
-        { start: 'F', end: 'G' },
-        { start: 'G', end: 'H' },
-        { start: 'H', end: 'E' },
-        // 옆 모서리
-        { start: 'A', end: 'E' },
-        { start: 'B', end: 'F' },
-        { start: 'C', end: 'G' },
-        { start: 'D', end: 'H' }
       ],
       faces: [
         { vertices: ['A', 'B', 'C', 'D'] }, // 윗면
