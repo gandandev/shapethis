@@ -1,58 +1,27 @@
-<script>
-  import ObjectView from '$lib/components/ObjectView.svelte'
+<script lang="ts">
+  import { Camera, Images } from 'phosphor-svelte'
+  import Logo from '$lib/components/Logo.svelte'
 </script>
 
-<ObjectView
-  objects={[
-    {
-      position: [0, 0, 0],
-      vertices: [
-        { position: [0, 1, 0], label: 'A' },
-        { position: [0, 1, 1], label: 'B' },
-        { position: [1, 1, 1], label: 'C' },
-        { position: [1, 1, 0], label: 'D' },
-        { position: [0, 0, 0], label: 'E' },
-        { position: [0, 0, 1], label: 'F' },
-        { position: [1, 0, 1], label: 'G' },
-        { position: [1, 0, 0], label: 'H' }
-      ],
-      faces: [
-        { vertices: ['A', 'B', 'C', 'D'] }, // 윗면
-        { vertices: ['E', 'F', 'G', 'H'] }, // 아랫면
-        { vertices: ['A', 'B', 'F', 'E'] }, // 앞면
-        { vertices: ['B', 'C', 'G', 'F'] }, // 오른쪽 면
-        { vertices: ['C', 'D', 'H', 'G'] }, // 뒷면
-        { vertices: ['D', 'A', 'E', 'H'] } // 왼쪽 면
-      ],
-      options: {
-        mode: 'solid',
-        color: '#3498db'
-      }
-    },
-    {
-      position: [2, 0, 0],
-      vertices: [
-        { position: [0, 1, 0], label: 'A' },
-        { position: [0, 1, 1], label: 'B' },
-        { position: [1, 1, 1], label: 'C' },
-        { position: [1, 1, 0], label: 'D' },
-        { position: [0, 0, 0], label: 'E' },
-        { position: [0, 0, 1], label: 'F' },
-        { position: [1, 0, 1], label: 'G' },
-        { position: [1, 0, 0], label: 'H' }
-      ],
-      faces: [
-        { vertices: ['A', 'B', 'C', 'D'] }, // 윗면
-        { vertices: ['E', 'F', 'G', 'H'] }, // 아랫면
-        { vertices: ['A', 'B', 'F', 'E'] }, // 앞면
-        { vertices: ['B', 'C', 'G', 'F'] }, // 오른쪽 면
-        { vertices: ['C', 'D', 'H', 'G'] }, // 뒷면
-        { vertices: ['D', 'A', 'E', 'H'] } // 왼쪽 면
-      ],
-      options: {
-        mode: 'solid',
-        color: 'red'
-      }
-    }
-  ]}
-/>
+<div class="flex h-dvh w-full flex-col p-4">
+  <div class="grow"></div>
+
+  <Logo size={40} />
+
+  <div class="grow"></div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <label
+      class="flex flex-col items-center gap-1 rounded-2xl bg-black p-4 font-semibold text-white"
+    >
+      <input type="file" accept="image/*" capture="environment" hidden />
+      <Camera size={24} weight="fill" />
+      바로 찍기
+    </label>
+    <label class="flex flex-col items-center gap-1 rounded-2xl bg-gray-100 p-4">
+      <input type="file" accept="image/*" hidden />
+      <Images size={24} weight="fill" />
+      사진 불러오기
+    </label>
+  </div>
+</div>
