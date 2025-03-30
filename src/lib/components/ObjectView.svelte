@@ -10,7 +10,7 @@
     createFaceGeometry,
     shouldShowVertex,
     type Object3D
-  } from '$lib/utils/geometryUtils'
+  } from '$lib/utils/geometry'
 
   type Object = Object3D
 
